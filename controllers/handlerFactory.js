@@ -74,11 +74,11 @@ exports.getOne = (Model, popOptions) =>
 
 exports.getAll = Model =>
     catchAsync(async (req, res, next) => {  
-        const docs = Model.find({});
+        const doc = await Model.find();
 
         res.status(200).json({
             status: 'success',
-            results: docs.length,
+            results: doc.length,
             data: {
                 data: doc,
             }

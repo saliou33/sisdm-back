@@ -1,7 +1,12 @@
 GET http://localhost:3000/
 
 ###
-# Create User
+# Get Patient
+GET http://localhost:3000/api/v1/patients
+
+
+###
+# Create Patient
 POST http://localhost:3000/api/v1/patients
 Content-Type: application/json
 
@@ -12,6 +17,21 @@ Content-Type: application/json
     "password": "passer",
     "passwordConfirm": "passer",
     "groupeSanguin": "AB+"
+}
+
+###
+# Create User
+POST http://localhost:3000/api/v1/users/signup
+Content-Type: application/json
+
+{
+    "nom" : "lo",
+    "prenom" : "serigne saliou",
+    "email" : "saliou.lo.sl@gmail.com",
+    "password" : "passer",
+    "passwordConfirm": "passer",
+    "groupeSanguin" : "O-",
+    "__t" : "Patient"
 }
 
 ###
@@ -28,3 +48,23 @@ Content-Type: application/json
 ###
 # Logout
 GET http://localhost:3000/api/v1/users/logout
+
+
+###
+# Forgot Password
+POST http://localhost:3000/api/v1/users/forgotPassword
+Content-Type: application/json
+
+{
+    "email" : "saliou.lo.sl@gmail.com"
+}
+
+###
+# resetPasword
+PATCH http://localhost:3000/api/v1/users/resetPassword/e96ec36e6fba3fd091a1961ca6d78b0743bdf892f383ec7f526073c54a34420f
+Content-Type: application/json
+
+{
+    "password": "passer",
+    "passwordConfirm": "passer"
+}

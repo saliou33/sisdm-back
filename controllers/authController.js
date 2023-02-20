@@ -46,7 +46,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     ...req.body,
   });
 
-  const url = `${res.protocol}://${req.get('host')}//me`;
+  const url = `${req.protocol}://${req.get('host')}//me`;
   console.log(url);
 
   await new Email(newUser, url).sendWelcome();
@@ -205,22 +205,22 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
         .update(req.params.token)
         .digest('hex');
 
-        const user = await User.findOne({
-            passwordResetToken: hashedToken,
-            passwordResetExpires: { $gt: Date.now() }
-        });
+    const user = await User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: Date.now() }
+    });
 
-        if (!user) {
-            return next(new AppError('Le jeton est invalide ou a expiré.', 400));
-        }
+    if (!user) {
+        return next(new AppError('Le jeton est invalide ou a expiré.', 400));
+    }
 
-        user.password = req.body.password;
-        user.passworConfirm = req.body.passwordConfirm;
-        user.passwordResetToken = undefined;
-        user.passwordResetExpires = undefined;
-        await user.save();
+    user.password = req.body.password;
+    user.passworConfirm = req.body.passwordConfirm;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
 
-        createSendToken(user, 200, res);
+    createSendToken(user, 200, res);
 })
 
 

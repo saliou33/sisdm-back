@@ -1,6 +1,13 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+
+const baseOptions = {
+    discriminatorKey: "role",
+    collection: "user",
+    timestamps: true,
+}
 
 const BaseUserSchema  = new mongoose.Schema({
     nom: {
@@ -42,14 +49,10 @@ const BaseUserSchema  = new mongoose.Schema({
         default: true,
         select: false,
     }
-});
+}, baseOptions);
 
 
-const baseOption = {
-    discriminatorKey: "user",
-    collection: "user",
-    timestamps: true,
-}
+
 
 BaseUserSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
@@ -96,7 +99,7 @@ BaseUserSchema.methods.createPasswordResetToken = function () {
     const resetToken = crypto.randomBytes(32).toString('hex');
     
     this.passwordResetToken = crypto
-        .createHash('256')
+        .createHash('sha256')
         .update(resetToken)
         .digest('hex')
 
