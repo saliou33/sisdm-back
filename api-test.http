@@ -1,0 +1,30 @@
+GET http://localhost:3000/
+
+###
+# Create User
+POST http://localhost:3000/api/v1/patients
+Content-Type: application/json
+
+{
+    "nom": "lo",
+    "prenom": "saliou",
+    "email": "losaliou.sl33@gmail.com",
+    "password": "passer",
+    "passwordConfirm": "passer",
+    "groupeSanguin": "AB+"
+}
+
+###
+# Login
+POST http://localhost:3000/api/v1/users/login
+Content-Type: application/json
+
+{
+    "email": "losaliou.sl33@gmail.com",
+    "password": "passer"
+}
+
+
+###
+# Logout
+GET http://localhost:3000/api/v1/users/logout

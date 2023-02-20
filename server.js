@@ -11,20 +11,18 @@ dotenv.config({path : './config.env'});
 const app = require('./app');
 
 const DB = process.env.DATABASE_LOCAL;
-
+mongoose.set('strictQuery', true);
 mongoose
     .connect(DB, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
-    .then(() => console.log('DB connected'));
-
+    .then(() => console.log('DB CONNNECTED..'));
 
 const port = process.env.PORT || 3000;
 
-
 // SERVER LISTENING ON PORT
-const server = app.listen(port, () => {
-    console.log(`App running on port ${port}...`);
+app.listen(port, () => {
+    console.log(`APP RUNNING ON PORT ${port}...`);
 });
   
