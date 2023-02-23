@@ -13,10 +13,13 @@ const RencontreSchema = new mongoose.Schema({
     type: String,
     enum: ['chat', 'voice', 'video'],
   },
-  decisions: {
-    type: String,
-    trim: true,
-  },
+  commentaire: String,
+  ordonnances: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Ordonnance',
+    },
+  ],
 });
 
 module.exports = mongoose.model('Rencontre', RencontreSchema);

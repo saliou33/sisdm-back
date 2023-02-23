@@ -3,17 +3,17 @@ const mongoose = require('mongoose');
 const DossierMedicalSchema = new mongoose.Schema({
   patient: {
     type: mongoose.Schema.ObjectId,
-    ref: ['Patient'],
+    ref: 'Patient',
   },
   rencontres: [
     {
       type: mongoose.Schema.ObjectId,
-      ref: ['Rencontre'],
+      ref: 'Rencontre',
     },
   ],
   historique: {
     type: mongoose.Schema.ObjectId,
-    ref: ['Historique'],
+    ref: 'Historique',
   },
   decisions: {
     type: String,
