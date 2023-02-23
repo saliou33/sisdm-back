@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
 const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
-const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const User = require('./../models/userModel');
 const Email = require('./../utils/email');
 
 const signToken = (id) => {
@@ -47,7 +46,6 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 
   const url = `${req.protocol}://${req.get('host')}//me`;
-  console.log(url);
 
   await new Email(newUser, url).sendWelcome();
   createSendToken(newUser, 201, res);
@@ -150,7 +148,7 @@ exports.isLoggedIn = async (req, res, next) => {
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user.__t)) {
       return next(
         new AppError(
           "Vous n'avez pas la permission de faire cette action.",
@@ -198,42 +196,40 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-
 exports.resetPassword = catchAsync(async (req, res, next) => {
-    const hashedToken = crypto
-        .createHash('sha256')
-        .update(req.params.token)
-        .digest('hex');
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
 
-    const user = await User.findOne({
-        passwordResetToken: hashedToken,
-        passwordResetExpires: { $gt: Date.now() }
-    });
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
 
-    if (!user) {
-        return next(new AppError('Le jeton est invalide ou a expiré.', 400));
-    }
+  if (!user) {
+    return next(new AppError('Le jeton est invalide ou a expiré.', 400));
+  }
 
-    user.password = req.body.password;
-    user.passworConfirm = req.body.passwordConfirm;
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save();
+  user.password = req.body.password;
+  user.passworConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
 
-    createSendToken(user, 200, res);
-})
-
+  createSendToken(user, 200, res);
+});
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
-    const user = await User.findById(req.user.id).select('+password');
+  const user = await User.findById(req.user.id).select('+password');
 
-    if (!await user.correctPassword(req.body.passwordCurrent, user.password)) {
-        return next(new AppError('Votre mot de passe courant est incorrect', 401));
-    }
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(new AppError('Votre mot de passe courant est incorrect', 401));
+  }
 
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
-    await user.save();
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
 
-    createSendToken(user, 200, res);
-})
+  createSendToken(user, 200, res);
+});

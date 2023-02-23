@@ -5,18 +5,34 @@ const typeGroupeSanguins = ['A', 'B', 'AB', 'O'];
 
 const typeGroupeSanguinsComplet = [];
 
-typeGroupeSanguins.forEach(t => {
-    typeGroupeSanguinsComplet.push(t + '+');
-    typeGroupeSanguinsComplet.push(t + '-');
+typeGroupeSanguins.forEach((t) => {
+  typeGroupeSanguinsComplet.push(t + '+');
+  typeGroupeSanguinsComplet.push(t + '-');
 });
-
 
 const PatientSchema = new mongoose.Schema({
-    groupeSanguin: {
-        type: String,
-        enum: typeGroupeSanguinsComplet,
-    }
+  sexe: {
+    type: String,
+    enum: ['M', 'F'],
+    required: [true, 'Veuillez donner le genre'],
+  },
+  dateNaissance: {
+    type: Date,
+    required: [true, 'Veuillez donner la date de naissance'],
+  },
+  adresse: {
+    type: String,
+    required: [true, "Veuillez donner l'adresse"],
+  },
+  profession: String,
+  personneSecondaire: {
+    nom: String,
+    tel: String,
+  },
+  groupeSanguin: {
+    type: String,
+    enum: typeGroupeSanguinsComplet,
+  },
 });
 
-const Patient = BaseUser.discriminator("Patient", PatientSchema);
-module.exports = Patient;
+module.exports = BaseUser.discriminator('Patient', PatientSchema);
