@@ -9,4 +9,4 @@ const AdminSchema = new mongoose.Schema({
   },
 });
 
-module.exports = BaseUser.discriminator('Medecin', AdminSchema);
+module.exports = BaseUser.discriminator('Admin', AdminSchema);

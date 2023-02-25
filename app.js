@@ -9,8 +9,18 @@ const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+
+// App Router
 const userRouter = require('./routes/userRoutes');
 const patientRouter = require('./routes/patientRoutes');
+const adminRouter = require('./routes/adminRoutes');
+const medecinRouter = require('./routes/medecinRoutes');
+const dossierMedicalRouter = require('./routes/dossierMedicalRoutes');
+const historiqueRouter = require('./routes/historiqueRoutes');
+const rencontreRouter = require('./routes/rencontreRoutes');
+const specialiteRouter = require('./routes/specialiteRoutes');
+const ordonnanceRouter = require('./routes/ordonnanceRoutes');
+const medicamentRouter = require('./routes/medecinRoutes');
 
 // express app
 const app = express();
@@ -32,6 +42,7 @@ const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
 });
+
 app.use('/api', limiter);
 
 // Body parser
@@ -52,17 +63,29 @@ app.use((req, res, next) => {
   next();
 });
 
-//- ROUTES
+//- APP ROUTES
+const BASE = '/api/v1';
+// GET /
 app.get('/', (req, res) => {
   return res.json({
     server: 'SISDM API BACKEND',
     version: '1.0',
   });
 });
-app.use('/api/v1/patients', patientRouter);
-app.use('/api/v1/users', userRouter);
 
-app.all('*', (res, req, next) => {
+app.use(`${BASE}/users`, userRouter);
+app.use(`${BASE}/admins`, adminRouter);
+app.use(`${BASE}/patients`, patientRouter);
+app.use(`${BASE}/medecins`, medecinRouter);
+
+app.use(`${BASE}/dms`, dossierMedicalRouter);
+app.use(`${BASE}/ordonnances`, ordonnanceRouter);
+app.use(`${BASE}/specialites`, specialiteRouter);
+app.use(`${BASE}/rencontres`, rencontreRouter);
+app.use(`${BASE}/historiques`, historiqueRouter);
+app.use(`${BASE}/medicament`, medicamentRouter);
+
+app.all('*', (req, res, next) => {
   next(new AppError(`"${req.originalUrl}" est introuvable!`, 404));
 });
 

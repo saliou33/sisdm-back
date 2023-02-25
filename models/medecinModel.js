@@ -4,7 +4,7 @@ const BaseUser = require('./userModel');
 const MedecinSchema = new mongoose.Schema({
   specialites: [
     {
-      type: mongoose.Schema.specialite,
+      type: mongoose.Schema.ObjectId,
       ref: 'SpecialiteMedecin',
     },
   ],
