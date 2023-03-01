@@ -67,7 +67,8 @@ mongoose
   })
   .then(() => {
     console.log('DB CONNNECTED..');
-    seed();
-    console.log('Seed Done');
-    process.exit(1);
+    seed().then(() => {
+      console.log('Seed Done');
+      process.exit(1);
+    });
   });

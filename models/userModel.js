@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 
 const baseOptions = {
   discriminatorKey: 'role',
-  collection: 'user',
+  collection: 'users',
   timestamps: true,
 };
 
