@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// limit request from client
+// rate limiter for client
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
