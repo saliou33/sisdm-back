@@ -30,7 +30,12 @@ const app = express();
 app.use(helmet());
 
 // Implements CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 
 // Dev Logging
 if (process.env.NODE_ENV === 'development') {

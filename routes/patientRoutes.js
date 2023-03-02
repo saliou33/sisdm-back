@@ -1,7 +1,10 @@
 const { Router } = require('express');
 const patientController = require('./../controllers/patientController');
+const authController = require('./../controllers/authController');
 
 const router = Router();
+
+router.use(authController.protect);
 
 router
   .route('/')
