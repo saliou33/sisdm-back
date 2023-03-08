@@ -4,10 +4,7 @@ const OrdonnanceSchema = new mongoose.Schema({
   examens: [String],
   prescriptions: [
     {
-      medicament: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Medicament',
-      },
+      medicament: [String],
       prise: String,
     },
   ],

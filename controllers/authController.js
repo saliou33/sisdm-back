@@ -63,6 +63,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   const user = await User.findOne({ email }).select('+password');
+
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Email ou Mot de passe Incorrecte', 401));
   }
@@ -71,10 +72,14 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-  res.cookie('jwt', 'loggedout', {
-    expires: new Date(Date.now() + 10 * 1000),
+  const cookieOptions = {
+    expires: new Date(new Date(Date.now() + 10 * 1000)),
     httpOnly: true,
-  });
+    sameSite: 'none',
+    secure: true,
+  };
+
+  res.cookie('jwt', 'loggedout', cookieOptions);
 
   res.status(200).json({ status: 'success' });
 };
@@ -93,7 +98,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!token) {
     return next(
       new AppError(
-        "Voust n'etes pas connecte! Veuillez vous connecter pour avoir l'acces.",
+        "Vous n'etes pas connecte! Veuillez vous connecter pour continuer.",
         400
       )
     );
@@ -103,7 +108,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
-    return next(new AppError("L'utilisateur concerne n'existe plus", 401));
+    return next(new AppError("L'utilisateur  n'existe plus", 401));
   }
 
   if (currentUser.changedPasswordAfter(decoded.iat)) {
@@ -138,19 +143,36 @@ exports.isLoggedIn = async (req, res, next) => {
         return next();
       }
 
-      res.locals.user = currentUser;
+      req.user = currentUser;
       return next();
     } catch (err) {
       return next();
     }
   }
 
-  next();
+  return next();
+
+  // next(
+  //   new AppError(
+  //     "Vous n'etes pas connecte! Veuillez vous connecter pour continuer.",
+  //     400
+  //   )
+  // );
+};
+
+exports.logged = async (req, res, next) => {
+  if (req.user) {
+    return res
+      .status(200)
+      .json({ status: 'success', data: { user: req.user } });
+  }
+
+  return res.status(200).json({ status: 'fail', data: {} });
 };
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.__t)) {
+    if (!roles.includes(req.user.role)) {
       return next(
         new AppError(
           "Vous n'avez pas la permission de faire cette action.",
