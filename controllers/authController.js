@@ -54,7 +54,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
   if (!email || !password) {
     return next(
@@ -62,10 +62,28 @@ exports.login = catchAsync(async (req, res, next) => {
     );
   }
 
+  if (!role) {
+    return next(
+      new AppError("Veuillez renseigner le type de l'utilisateur", 400)
+    );
+  }
+
   const user = await User.findOne({ email }).select('+password');
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Email ou Mot de passe Incorrecte', 401));
+  }
+
+  console.log(user.role);
+  console.log(role);
+
+  if (user.role !== role) {
+    return next(
+      new AppError(
+        "Vous n'avez pas l'autorisation nécessaire pour vous connecter ici.",
+        403
+      )
+    );
   }
 
   createSendToken(user, 200, res);
